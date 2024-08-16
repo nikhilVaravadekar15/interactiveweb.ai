@@ -11,5 +11,5 @@ export const axiosRequestConfig: AxiosRequestConfig = {
 };
 
 export async function create(data: TInputFormSchema) {
-  return await axios.post("/api/create", data, axiosRequestConfig);
+  return await axios.post("/api/curl", data, axiosRequestConfig);
 }
