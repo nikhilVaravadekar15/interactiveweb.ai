@@ -8,6 +8,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import React from "react";
+import { create } from "@/http";
 import { Input } from "./ui/input";
 import { useForm } from "react-hook-form";
 import Spinner from "@/components/Spinner";
@@ -16,17 +17,18 @@ import { TInputFormSchema } from "@/types";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { ErrorMessage } from "@hookform/error-message";
-import { create } from "@/http";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { BadgeCheck, PlusCircle, ArrowBigRight } from "lucide-react";
 
 export default function Create() {
   const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<TInputFormSchema>({
     resolver: zodResolver(inputFormSchema),
@@ -36,13 +38,22 @@ export default function Create() {
     mutationFn: async (data: TInputFormSchema) => {
       return await create(data);
     },
-    onSuccess: async (response) => {},
-    onError: (response) => {
+    onSuccess: async (response) => {
+      toast({
+        variant: "default",
+        title: "Successfully added",
+      });
+      queryClient.invalidateQueries({ queryKey: ["cards"] });
+    },
+    onError: (error) => {
       toast({
         variant: "destructive",
         title: "Oh oh! Something went wrong,",
         description: "Please try again later.",
       });
+    },
+    onSettled: () => {
+      reset();
     },
   });
 
@@ -62,8 +73,8 @@ export default function Create() {
       <DialogContent className="max-w-2xl h-[20%]">
         <DialogHeader>
           <DialogDescription asChild>
-            {mutation.isPaused ? (
-              <div className="w-full h-full flex flex-col items-center justify-center border outline cursor-pointer">
+            {mutation.isPending ? (
+              <div className="w-full h-full flex flex-col items-center justify-center border cursor-pointer">
                 <div className="flex gap-2 flex-col items-center justify-center">
                   <Spinner color="purple" classname="w-6 h-6" />
                 </div>
@@ -82,9 +93,6 @@ export default function Create() {
                       autoComplete="off"
                       className="focus-visible:ring-0 text-black dark:text-white"
                     />
-                    <Button variant={"default"} type="submit">
-                      <ArrowBigRight />
-                    </Button>
                   </div>
                   <span className="h-4 px-2 text-base font-semibold text-red-600">
                     <ErrorMessage errors={errors} name="url" />

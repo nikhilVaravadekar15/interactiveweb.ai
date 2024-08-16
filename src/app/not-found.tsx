@@ -17,7 +17,7 @@ export default function NotFound() {
         <Link
           href={"/"}
           passHref={true}
-          className="text-sm py-4 px-8 flex gap-2 items-center justify-center font-semibold text-white bg-blue-500 rounded-2xl"
+          className="text-sm py-4 px-8 flex gap-2 items-center justify-center font-semibold text-white bg-purple-900 rounded-2xl"
         >
           <ArrowBigLeft size={20} />
           Go back

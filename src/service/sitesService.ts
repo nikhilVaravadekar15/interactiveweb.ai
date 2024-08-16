@@ -1,7 +1,7 @@
 import { db } from "@/db/mysql";
 import { sites } from "@/db/mysql/schema";
 import { TInputFormSchema } from "@/types";
-import { eq } from "drizzle-orm";
+import { asc, desc, eq } from "drizzle-orm";
 
 class SitesService {
   async create({ url }: TInputFormSchema) {
@@ -24,7 +24,7 @@ class SitesService {
   }
 
   async getAll() {
-    return await db.select().from(sites);
+    return await db.select().from(sites).orderBy(desc(sites.created_at));
   }
 }
 

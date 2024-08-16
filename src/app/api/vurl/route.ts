@@ -20,7 +20,7 @@ export async function POST(request: Request, resonse: Response) {
       return NextResponse.json({ error: "Invalid Url" }, { status: 400 });
     }
 
-    const id = await sitesService.create({ url: res.url });
+    const { id } = await sitesService.create({ url: res.url });
     if (!id) {
       throw new Error();
     }
