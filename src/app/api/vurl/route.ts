@@ -1,7 +1,9 @@
-import sitesService from "@/service/sitesService";
-import { TInputFormSchema } from "@/types";
 import { inputFormSchema } from "@/zod";
+import { TInputFormSchema } from "@/types";
 import { NextRequest, NextResponse } from "next/server";
+import sitesService from "@/service/sitesService";
+import segmentService from "@/service/segmentService";
+import scrappingService from "@/service/scrappingService";
 
 export async function POST(request: Request, resonse: Response) {
   try {
@@ -24,6 +26,11 @@ export async function POST(request: Request, resonse: Response) {
     if (!id) {
       throw new Error();
     }
+
+    const document = await scrappingService.getWebPageContent(res?.url);
+
+    const segmentedDocument = await segmentService.splitText(document);
+    console.info(segmentedDocument);
 
     return NextResponse.json(
       {
