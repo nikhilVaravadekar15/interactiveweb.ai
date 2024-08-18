@@ -42,4 +42,7 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 - [x] crud with react-query
 - [x] scrape url content with Cheerio
 - [x] segment the document 
-- [ ] vectorize the segmentated document 
+- [x] vectorize the segmentated document 
+- [ ] save vectors in chromadb
+- [x] chat page 
+- [ ] prompt and response

@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import sitesService from "@/service/sitesService";
 import segmentService from "@/service/segmentService";
 import scrappingService from "@/service/scrappingService";
+import embeddingService from "@/service/embeddingService";
 
 export async function POST(request: Request, resonse: Response) {
   try {
@@ -22,19 +23,24 @@ export async function POST(request: Request, resonse: Response) {
       return NextResponse.json({ error: "Invalid Url" }, { status: 400 });
     }
 
-    const { id } = await sitesService.create({ url: res.url });
-    if (!id) {
-      throw new Error();
-    }
+    // const { id } = await sitesService.create({ url: res.url });
+    // if (!id) {
+    //   throw new Error();
+    // }
 
     const document = await scrappingService.getWebPageContent(res?.url);
 
     const segmentedDocument = await segmentService.splitText(document);
-    console.info(segmentedDocument);
+    console.info(segmentedDocument?.[0]);
+
+    const embeddedDocument = await embeddingService.embeddedDocument(
+      segmentedDocument!,
+    );
+    console.info(embeddedDocument);
 
     return NextResponse.json(
       {
-        id: id,
+        id: "id",
         message: "Created",
       },
       { status: 201 },
