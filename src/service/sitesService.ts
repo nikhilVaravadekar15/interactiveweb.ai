@@ -4,12 +4,18 @@ import { TInputFormSchema } from "@/types";
 import { asc, desc, eq } from "drizzle-orm";
 
 class SitesService {
-  async create({ url }: TInputFormSchema) {
+  async create({
+    url,
+    collection_name,
+  }: TInputFormSchema & {
+    collection_name: string;
+  }) {
     return (
       await db
         .insert(sites)
         .values({
           url: url,
+          collection_name: collection_name,
         })
         .$returningId()
     )[0];

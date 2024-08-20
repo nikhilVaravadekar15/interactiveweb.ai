@@ -2,6 +2,7 @@ import { inputFormSchema } from "@/zod";
 import { TInputFormSchema } from "@/types";
 import sitesService from "@/service/sitesService";
 import { NextRequest, NextResponse } from "next/server";
+import { createFastEmbedding } from "@/http";
 
 export async function POST(request: Request, resonse: Response) {
   try {
@@ -20,14 +21,28 @@ export async function POST(request: Request, resonse: Response) {
       return NextResponse.json({ error: "Invalid Url" }, { status: 400 });
     }
 
-    // const { id } = await sitesService.create({ url: res.url });
-    // if (!id) {
-    //   throw new Error();
-    // }
+    const fastapiResponse = await createFastEmbedding(res);
+
+    if (fastapiResponse.status != 201) {
+      console.log(fastapiResponse.data.detail);
+      throw new Error(fastapiResponse.data.detail);
+    }
+
+    console.log(
+      `Collection created ${fastapiResponse.data.collection_name} for url ${fastapiResponse.data.url}`,
+    );
+
+    const { id } = await sitesService.create({
+      url: res.url,
+      collection_name: fastapiResponse.data.collection_name,
+    });
+    if (!id) {
+      throw new Error();
+    }
 
     return NextResponse.json(
       {
-        id: "id",
+        id: id,
         message: "Created",
       },
       { status: 201 },

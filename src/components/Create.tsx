@@ -7,7 +7,7 @@ import {
   DialogHeader,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import React from "react";
+import React, { useEffect } from "react";
 import { create } from "@/http";
 import { Input } from "./ui/input";
 import { useForm } from "react-hook-form";
@@ -19,11 +19,13 @@ import { useToast } from "@/components/ui/use-toast";
 import { ErrorMessage } from "@hookform/error-message";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { BadgeCheck, PlusCircle, ArrowBigRight } from "lucide-react";
+import { BadgeCheck, PlusCircle, ArrowBigRight, Send } from "lucide-react";
+import Link from "next/link";
 
 export default function Create() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [successId, setSuccessId] = React.useState<string>("");
 
   const {
     register,
@@ -39,6 +41,7 @@ export default function Create() {
       return await create(data);
     },
     onSuccess: async (response) => {
+      setSuccessId(response.data.id);
       toast({
         variant: "default",
         title: "Successfully added",
@@ -57,12 +60,25 @@ export default function Create() {
     },
   });
 
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (successId) {
+      timer = setTimeout(() => {
+        setSuccessId("");
+      }, 10000);
+    }
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [successId]);
+
   return (
     <Dialog>
       <DialogTrigger asChild>
         <Button
           variant={"outline"}
-          className="group w-[256px] h-[185px] outline outline-gray-600 shadow-sm cursor-pointer hover:shadow-md hover:outline-gray-700"
+          className="group w-[256px] h-[192px] outline outline-gray-600 shadow-sm cursor-pointer hover:shadow-md hover:outline-gray-700"
         >
           <PlusCircle
             size={32}
@@ -70,31 +86,47 @@ export default function Create() {
           />
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-2xl h-[20%]">
+      <DialogContent className="max-w-2xl h-[20%] top-[24%]">
         <DialogHeader>
           <DialogDescription asChild>
             {mutation.isPending ? (
-              <div className="w-full h-full flex flex-col items-center justify-center border cursor-pointer">
-                <div className="flex gap-2 flex-col items-center justify-center">
+              <div className="w-full h-full flex flex-col items-center justify-center cursor-pointer">
+                <div className="flex gap-2 flex-col items-center justify-center cursor-progress">
                   <Spinner color="purple" classname="w-6 h-6" />
+                  <span>Please wait, Our AI is working super hard...</span>
+                </div>
+              </div>
+            ) : successId ? (
+              <div className="w-full h-full flex flex-col items-center justify-center rounded cursor-pointer">
+                <div className="p-2 h-full w-full flex flex-col gap-2 justify-center">
+                  <div className="w-full flex gap-2 text-lg items-center justify-center">
+                    Start chatting with 🤖
+                    <Link
+                      href={`/u/${successId}`}
+                      className="text-blue-600 hover:text-blue-700"
+                    >
+                      here
+                    </Link>
+                  </div>
                 </div>
               </div>
             ) : (
-              <div className="w-full h-full flex flex-col items-center justify-center border rounded cursor-pointer">
+              <div className="w-full h-full flex flex-col items-center justify-center rounded cursor-pointer">
                 <form
                   onSubmit={handleSubmit((data) => {
                     mutation.mutate(data);
                   })}
                   className="p-2 h-full w-full flex flex-col gap-2 justify-center"
                 >
-                  <div className="w-full flex gap-2 items-center justify-center">
+                  <div className="p-2 w-full flex gap-2 items-center justify-center">
                     <Input
                       {...register("url")}
+                      autoFocus={true}
                       autoComplete="off"
-                      className="focus-visible:ring-0 text-black dark:text-white"
+                      className="h-14 focus-visible:ring-0 text-black dark:text-white "
                     />
                   </div>
-                  <span className="h-4 px-2 text-base font-semibold text-red-600">
+                  <span className="h-3 mb-3 px-2 text-base font-semibold text-red-600">
                     <ErrorMessage errors={errors} name="url" />
                   </span>
                 </form>
@@ -106,28 +138,3 @@ export default function Create() {
     </Dialog>
   );
 }
-
-// <Card
-//     className="w-full h-full flex flex-col items-center justify-center border outline cursor-pointer"
-// >
-//     <CardContent className="flex gap-2 flex-col items-center justify-center">
-//         <div className="flex text-green-900 gap-2 items-center justify-center">
-//             <BadgeCheck />
-//             Uploaded successfully
-//         </div>
-//         <Button
-//             asChild variant={"outline"}
-//             className="flex gap-1 items-center justify-center border-2 text-gray-700 hover:text-gray-800"
-//         >
-//             <Link
-//                 href={`/documents/1234567ytrewq2345tgfd`} target="_blank"
-//                 onClick={() => {
-//                     setFile(null)
-//                 }}
-//             >
-//                 Start chatting with your pdf document
-//                 <ArrowBigRight size={20} />
-//             </Link>
-//         </Button>
-//     </CardContent>
-// </Card>

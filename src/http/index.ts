@@ -1,7 +1,9 @@
 import { TInputFormSchema } from "@/types";
 import axios, { AxiosRequestConfig } from "axios";
 
-export const API_BASE_URL: string = process.env.NEXT_PUBLIC_BASE_URL!;
+export const NEXT_PUBLIC_BASE_URL: string = process.env.NEXT_PUBLIC_BASE_URL!;
+export const FASTAPI_BASE_URL: string = process.env.FASTAPI_BASE_URL!;
+
 export const axiosRequestConfig: AxiosRequestConfig = {
   withCredentials: true,
   headers: {
@@ -24,4 +26,12 @@ export async function deleteUrlById(id: string) {
 
 export async function getAll() {
   return await axios.get("/api/get-all", axiosRequestConfig);
+}
+
+export async function createFastEmbedding(data: TInputFormSchema) {
+  return await axios.post(
+    `${FASTAPI_BASE_URL}/api/v1/scrape-and-vectorize`,
+    data,
+    axiosRequestConfig,
+  );
 }
