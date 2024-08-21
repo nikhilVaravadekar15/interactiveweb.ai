@@ -15,9 +15,13 @@ class MessageService {
     return await db.insert(messages).values(tempMessages).$returningId();
   }
 
-  // async getAll() {
-  //   return await db.select().from(sites).orderBy(desc(sites.created_at));
-  // }
+  async getAllMessageBySid(sid: string) {
+    return await db
+      .select()
+      .from(messages)
+      .where(eq(messages.sid, sid))
+      .orderBy(desc(messages.created_at));
+  }
 }
 
 const messageService = new MessageService();

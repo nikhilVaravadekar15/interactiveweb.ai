@@ -28,6 +28,13 @@ export async function getAll() {
   return await axios.get("/api/get-all", axiosRequestConfig);
 }
 
+export async function getInitialMessages(sid: string) {
+  return await axios.get(
+    `/api/get-initial-messages?id=${sid}`,
+    axiosRequestConfig,
+  );
+}
+
 export async function createFastEmbedding(data: TInputFormSchema) {
   return await axios.post(
     `${FASTAPI_BASE_URL}/api/v1/scrape-and-vectorize`,

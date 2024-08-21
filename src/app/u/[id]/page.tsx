@@ -1,8 +1,10 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import React from "react";
 import Link from "next/link";
-import { useChat } from "ai/react";
+import { Message as XMessage, useChat } from "ai/react";
+import { getInitialMessages } from "@/http";
 import Message from "@/components/Message";
 import { useRouter } from "next/navigation";
 import ChatInput from "@/components/ChatInput";
@@ -18,6 +20,7 @@ export default function Page({ params }: Props) {
   }
 
   const lastMessageRef = React.useRef<HTMLDivElement>(null);
+  const [initialMessages, setInitialMessages] = React.useState<XMessage[]>([]);
   const {
     messages,
     input,
@@ -33,13 +36,27 @@ export default function Page({ params }: Props) {
     body: {
       id: params.id,
     },
+    initialMessages: initialMessages,
   });
 
   React.useEffect(() => {
+    getInitialMessages(params.id)
+      .then((res) => {
+        setInitialMessages(res.data);
+      })
+      .catch(() => {
+        setInitialMessages([]);
+      });
+
+    return () => {};
+  }, []);
+
+  React.useEffect(() => {
+    console.log(lastMessageRef.current);
     if (lastMessageRef.current) {
       lastMessageRef.current?.scrollIntoView({ behavior: "smooth" });
     }
-  }, [messages]);
+  }, [messages, initialMessages]);
 
   return (
     <div className="relative min-h-full flex justify-center">
