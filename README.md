@@ -46,3 +46,8 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 - [ ] save vectors in chromadb
 - [x] chat page 
 - [ ] prompt and response
+
+
+issue - [Error: ENOENT: no such file or directory, open '/var/task/.next/proto/proto/schema.proto'](https://github.com/milvus-io/milvus-sdk-node/issues/326)
+<br/>
+Resolution - https://github.com/zilliztech/zilliz-cloud-typescript-example/blob/master/semantic-search-example/next.config.js

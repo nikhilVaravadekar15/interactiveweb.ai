@@ -31,6 +31,7 @@ export default function List({}: Props) {
             key={item.id}
             id={item.id}
             url={item.url}
+            collection_name={item.collection_name}
             created_at={item.created_at}
           />
         );

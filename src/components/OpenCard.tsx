@@ -10,7 +10,12 @@ import { Button } from "@/components/ui/button";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-export default function OpenCard({ id, url, created_at }: TSite) {
+export default function OpenCard({
+  id,
+  url,
+  collection_name,
+  created_at,
+}: TSite) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -44,8 +49,8 @@ export default function OpenCard({ id, url, created_at }: TSite) {
           href={`/u/${id}`}
           className="overflow-hidden w-full hover:text-blue-900"
         >
-          <CardTitle className="tw-full ext-wrap text-xl font-bold" title={url}>
-            {url.length > 64 ? url.substring(0, 256) : url}
+          <CardTitle className="tw-full text-lg font-bold" title={url}>
+            {url.length > 56 ? url.substring(0, 56) : url}
           </CardTitle>
         </Link>
       </CardHeader>
