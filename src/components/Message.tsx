@@ -19,6 +19,7 @@ export default React.forwardRef(function Message(
         "bg-zinc-50": isUserMessage,
         "bg-zinc-100": !isUserMessage,
       })}
+      ref={ref}
     >
       <div className="p-6">
         <div className="max-w-3xl mx-auto flex items-start gap-2.5">
